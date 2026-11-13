@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sedmor"
+version = "0.1.0"
+description = "Libreria educativa en Python para hidrodinamica costera/fluvial, transporte de sedimentos y morfodinamica (basada en las herramientas Excel de Leo C. van Rijn, 2013)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [
+  { name = "Basado en las hojas de calculo de Leo C. van Rijn (2013)" },
+]
+keywords = [
+  "sediment-transport",
+  "coastal-engineering",
+  "fluvial-hydraulics",
+  "morphodynamics",
+  "van-rijn",
+  "hydrodynamics",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+  "openpyxl>=3.1",
+  "build>=1.0",
+]
+examples = [
+  "matplotlib>=3.7",
+  "jupyter>=1.0",
+  "ipykernel>=6.0",
+  "nbconvert>=7.0",
+]
+all = [
+  "sedmor[dev,examples]",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
