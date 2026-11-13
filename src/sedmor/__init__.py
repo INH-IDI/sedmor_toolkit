@@ -9,10 +9,12 @@ cuadernos de ejemplo en español. No contiene ni redistribuye archivos Excel de 
 from __future__ import annotations
 
 from sedmor import (
+    armor,
     coastal_transport,
     constants,
     currents,
     littoral,
+    overtopping,
     river_transport,
     rivers,
     runup,
@@ -23,6 +25,7 @@ from sedmor import (
     turbidity,
     waves,
 )
+from sedmor.armor import *  # noqa: F401,F403
 from sedmor.coastal_transport import *  # noqa: F401,F403
 from sedmor.constants import (  # noqa: F401
     GRAVITY,
@@ -38,6 +41,7 @@ from sedmor.constants import (  # noqa: F401
 )
 from sedmor.currents import *  # noqa: F401,F403
 from sedmor.littoral import *  # noqa: F401,F403
+from sedmor.overtopping import *  # noqa: F401,F403
 from sedmor.river_transport import *  # noqa: F401,F403
 from sedmor.rivers import *  # noqa: F401,F403
 from sedmor.runup import *  # noqa: F401,F403
@@ -51,10 +55,12 @@ from sedmor.waves import *  # noqa: F401,F403
 __version__ = "0.1.0"
 
 _SUBMODULES = [
+    "armor",
     "coastal_transport",
     "constants",
     "currents",
     "littoral",
+    "overtopping",
     "river_transport",
     "rivers",
     "runup",
@@ -85,6 +91,9 @@ __all__ = sorted(
         *_SUBMODULES,
         *_CONSTANTS,
         *waves.__all__,
+        *runup.__all__,
+        *overtopping.__all__,
+        *armor.__all__,
         *currents.__all__,
         *tides.__all__,
         *rivers.__all__,
@@ -92,7 +101,6 @@ __all__ = sorted(
         *coastal_transport.__all__,
         *tidal_transport.__all__,
         *littoral.__all__,
-        *runup.__all__,
         *scour.__all__,
         *turbidity.__all__,
         *sedimentation.__all__,

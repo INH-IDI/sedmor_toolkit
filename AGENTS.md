@@ -1,6 +1,6 @@
 # AGENTS.md — Guía de desarrollo y arquitectura para `sedmor`
 
-Este repositorio contiene la librería educativa **`sedmor`** (`sedmor-0.1.0`), implementada de forma independiente en Python puro (NumPy y SciPy) a partir de formulaciones científicas abiertas de ingeniería fluvial, estuarina y costera, acompañada de **10 cuadernos Jupyter didácticos en español** en [`examples/`](examples/).
+Este repositorio contiene la librería educativa **`sedmor`** (`sedmor-0.1.0`), implementada de forma independiente en Python puro (NumPy y SciPy) a partir de formulaciones científicas abiertas de ingeniería fluvial, estuarina y costera, acompañada de **12 cuadernos Jupyter didácticos en español** en [`examples/`](examples/).
 
 Repositorio remoto: `https://github.com/INH-IDI/sedmor_toolkit` (rama principal: `main`).
 
@@ -11,7 +11,7 @@ Repositorio remoto: `https://github.com/INH-IDI/sedmor_toolkit` (rama principal:
 1. **Independencia total y propiedad intelectual**:
    - `sedmor` es un desarrollo original en código abierto (licencia MIT sobre el código Python, pruebas y cuadernos).
    - **No** incluir, almacenar, empaquetar ni referenciar rutas a archivos `.xls`/`.xlsx` externos o macros propietarias de terceros; tanto la librería como [`tests/`](tests/) deben ser 100% autónomas.
-   - Al añadir módulos nuevos (como [`runup.py`](src/sedmor/runup.py)), basarlos exclusivamente en ecuaciones publicadas en literatura científica abierta y documentar las referencias bibliográficas en el docstring y en [`README.md`](README.md).
+   - Al añadir módulos nuevos (como [`runup.py`](src/sedmor/runup.py), [`overtopping.py`](src/sedmor/overtopping.py) o [`armor.py`](src/sedmor/armor.py)), basarlos exclusivamente en ecuaciones publicadas en literatura científica abierta y documentar las referencias bibliográficas en el docstring y en [`README.md`](README.md).
 2. **Alcance funcional**:
    - Cobertura centrada en formulaciones analíticas, empíricas y semiempíricas 1D/0D en Python puro. No incorporar ejecutables binarios externos, código compilado heredado ni herramientas ajenas al alcance de esta librería.
    - No modificar archivos fuera de `sedmor_toolkit/`.
@@ -34,13 +34,15 @@ Las funciones calibradas frente a formulaciones tabuladas clásicas aceptan el a
 
 ## 3. Mapa de arquitectura (`src/sedmor/`)
 
-[`src/sedmor/__init__.py`](src/sedmor/__init__.py) exporta `__version__ = "0.1.0"`, los **13 submódulos** y **162 símbolos públicos** en `__all__`:
+[`src/sedmor/__init__.py`](src/sedmor/__init__.py) exporta `__version__ = "0.1.0"`, los **15 submódulos** y **192 símbolos públicos** en `__all__`:
 
 | Archivo | Rol y contenido principal |
 | :--- | :--- |
 | [`constants.py`](src/sedmor/constants.py) | Constantes físicas (`GRAVITY`, `RHO_FRESH_WATER`, `RHO_SEA_WATER`, `RHO_SEDIMENT`, `VON_KARMAN`, viscosidades, `PI_EXCEL`, `PI_STANDARD`) |
 | [`waves.py`](src/sedmor/waves.py) | Relación de dispersión (`dispersion_relation`, Hunt, Nielsen), espectro JONSWAP, capa límite oscilatoria, decaimiento por fricción, Battjes & Janssen, Abreu, Isobe-Horikawa, Nielsen, *undertow* y *streaming* |
 | [`runup.py`](src/sedmor/runup.py) | Número de Iribarren y modelos de *run-up* (`runup_stockdon`, `runup_holman`, `runup_mase`, `runup_hunt`, `runup_nielsen_hanslow`, `runup_eurotop`), `total_water_level` (*TWL*) y `compare_runup_models` |
+| [`overtopping.py`](src/sedmor/overtopping.py) | Rebase de oleaje EurOtop (2018) en taludes, escolleras y muros verticales (`overtopping_slope`, `overtopping_rubble_mound`, `overtopping_vertical_wall`, `individual_overtopping_volumes`, `solve_required_freeboard`, `classify_overtopping_hazard`) |
+| [`armor.py`](src/sedmor/armor.py) | Dimensionamiento de roca de coraza y filtros (`hudson_armor_weight`, `van_der_meer_rock_armor`, `van_gent_shallow_rock_armor`, `isbash_stone_stability`, `rock_size_properties`, `classify_rock_grading`, `filter_and_underlayer_design`, `compare_armor_methods`) |
 | [`rivers.py`](src/sedmor/rivers.py) | Canales trapezoidales, calado normal, flujo en sección compuesta, curva de remanso y resalto libre |
 | [`currents.py`](src/sedmor/currents.py) | Asimetría mareal M2+M4, corrientes inducidas por viento y perfil estratificado por gradiente de densidad (`stratified_density_flow_profile`, `stratified_channel_sedimentation`) |
 | [`tides.py`](src/sedmor/tides.py) | Propagación analítica y compuesta de mareas, reflexión prismática/convergente, cuatripolo, onda no lineal de Lamb, flujo costero de Soulsby e intrusión salina (van Rijn, Kuijper, transitoria) |
@@ -78,14 +80,14 @@ Ejecutar siempre en un entorno limpio (sin instalaciones heredadas previas en `s
 PYTHONPATH=src python3 -m pytest -v
 ```
 
-La suite actual comprende **68 pruebas** repartidas en 9 archivos en [`tests/`](tests/) (`test_currents_tides.py`, `test_littoral.py`, `test_rivers_transport.py`, `test_runup.py`, `test_scour.py`, `test_sedimentation.py`, `test_tidal_transport.py`, `test_turbidity.py`, `test_waves.py`).
+La suite actual comprende **80 pruebas** repartidas en 11 archivos en [`tests/`](tests/) (`test_armor.py`, `test_currents_tides.py`, `test_littoral.py`, `test_overtopping.py`, `test_rivers_transport.py`, `test_runup.py`, `test_scour.py`, `test_sedimentation.py`, `test_tidal_transport.py`, `test_turbidity.py`, `test_waves.py`).
 
-### Cuadernos de ejemplo (`examples/01..10_*.ipynb`)
+### Cuadernos de ejemplo (`examples/01..12_*.ipynb`)
 
-Si se modifican APIs públicas o cuadernos, re-ejecutarlos sin definir `MPLBACKEND` (para incrustar las figuras PNG generadas con `matplotlib`) y comprobar 0 errores de celda:
+Si se modifican APIs públicas o cuadernos, re-ejecutarlos sin definir `MPLBACKEND` (para incrustar las figuras PNG generadas con `matplotlib`) y usando `PYTHONPATH` absoluto hacia `src/` (dado que `nbconvert` ejecuta con cwd en `examples/`):
 
 ```bash
-env -u MPLBACKEND PYTHONPATH=src python3 -m jupyter nbconvert \
+env -u MPLBACKEND PYTHONPATH=/home/model2/Documents/Hulp/sedmor_toolkit/src python3 -m jupyter nbconvert \
   --to notebook --execute --inplace \
   --ExecutePreprocessor.kernel_name=python3 examples/*.ipynb
 ```

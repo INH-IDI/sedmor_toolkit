@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sedmor"
 version = "0.1.0"
-description = "Libreria educativa independiente en Python para hidrodinamica costera y fluvial, transporte de sedimentos, run-up y morfodinamica."
+description = "Libreria educativa independiente en Python para hidrodinamica costera y fluvial, transporte de sedimentos, run-up, rebase, escolleras y morfodinamica."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
@@ -18,6 +18,8 @@ keywords = [
   "fluvial-hydraulics",
   "morphodynamics",
   "wave-runup",
+  "wave-overtopping",
+  "rock-armor",
   "hydrodynamics",
 ]
 classifiers = [
