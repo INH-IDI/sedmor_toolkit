@@ -1,8 +1,9 @@
 """``sedmor``: Librería educativa de hidrodinámica, transporte de sedimentos y morfodinámica.
 
-Implementa de forma modular y verificada todas las herramientas de cálculo en
-hojas Excel del paquete de modelación de Leo C. van Rijn (2013), con docstrings
-y cuadernos de ejemplo en español.
+Implementación científica independiente y autónoma en Python puro basada en la
+literatura de ingeniería fluvial, estuarina y costera (incluyendo formulaciones
+sistematizadas por L. C. van Rijn y otros autores clásicos), acompañada de
+cuadernos de ejemplo en español. No contiene ni redistribuye archivos Excel de terceros.
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from sedmor import (
     littoral,
     river_transport,
     rivers,
+    runup,
     scour,
     sedimentation,
     tidal_transport,
@@ -38,6 +40,7 @@ from sedmor.currents import *  # noqa: F401,F403
 from sedmor.littoral import *  # noqa: F401,F403
 from sedmor.river_transport import *  # noqa: F401,F403
 from sedmor.rivers import *  # noqa: F401,F403
+from sedmor.runup import *  # noqa: F401,F403
 from sedmor.scour import *  # noqa: F401,F403
 from sedmor.sedimentation import *  # noqa: F401,F403
 from sedmor.tidal_transport import *  # noqa: F401,F403
@@ -54,6 +57,7 @@ _SUBMODULES = [
     "littoral",
     "river_transport",
     "rivers",
+    "runup",
     "scour",
     "sedimentation",
     "tidal_transport",
@@ -88,6 +92,7 @@ __all__ = sorted(
         *coastal_transport.__all__,
         *tidal_transport.__all__,
         *littoral.__all__,
+        *runup.__all__,
         *scour.__all__,
         *turbidity.__all__,
         *sedimentation.__all__,

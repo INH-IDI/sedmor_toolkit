@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Contribuidores de sedmor
+Copyright (c) 2026 Instituto Nacional de Hidráulica (INH-IDI) y contribuidores de sedmor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ---
-Academic Attribution / Atribucion Academica:
-Las formulaciones matematicas, parametrizaciones empiricas y casos de
-referencia implementados en esta libreria reproducen y documentan los libros de
-calculo en Excel de Leo C. van Rijn ("MODELLING PACKAGE 2013" y publicaciones
-asociadas en https://www.leovanrijn-sediment.com).
+
+Notice of Independence and Academic Attribution / Aviso de Independencia y Atribución Académica
+
+La licencia MIT anterior cubre exclusivamente el código fuente original en Python,
+las pruebas unitarias y los cuadernos didácticos contenidos en este repositorio.
+
+`sedmor` es una implementación científica independiente y autónoma en código abierto.
+Este repositorio NO incluye, almacena, empaqueta ni redistribuye archivos Excel
+(.xls/.xlsx), macros ni material propietario o de terceros. Las ecuaciones
+matemáticas y parametrizaciones empíricas implementadas corresponden a formulaciones
+científicas abiertas publicadas en la literatura técnica y académica —incluyendo
+las obras del Prof. Leo C. van Rijn y de los autores originales citados en el
+archivo README.md— cuya inclusión en este software tiene fines estrictamente
+docentes y de investigación, sin implicar respaldo, patrocinio ni afiliación
+oficial por parte de dichos autores.

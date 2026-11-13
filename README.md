@@ -1,6 +1,8 @@
-# sedmor — Librería de Hidrodinámica, Transporte de Sedimentos y Morfología
+# sedmor — Librería de Hidrodinámica, Transporte de Sedimentos, Run-up y Morfología
 
-`sedmor` es una librería científica en Python, ligera y fácil de instalar, diseñada para cursos e ingeniería de **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada las **57 planillas de cálculo Excel** del *MODELLING PACKAGE 2013* del Prof. Leo C. van Rijn (2013), acompañadas de **9 cuadernos Jupyter didácticos en español** listos para ejecutar.
+`sedmor` es una librería científica abierta en Python, ligera y fácil de instalar, diseñada para docencia e ingeniería en **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada formulaciones clásicas y modernas publicadas en la literatura técnica de mecánica de fluidos y sedimentos (en **13 submódulos**), acompañadas de **10 cuadernos Jupyter didácticos en español** listos para ejecutar.
+
+> **Aviso importante de independencia**: `sedmor` es una implementación original e independiente escrita íntegramente en Python. **Este repositorio NO contiene, publica, empaqueta ni redistribuye archivos Excel (`.xls`/`.xlsx`), macros ni materiales propietarios de terceros**, y su funcionamiento es 100% autónomo.
 
 ---
 
@@ -22,7 +24,7 @@ pip install -e .
 # Instalación recomendada para estudiantes (incluye matplotlib y Jupyter)
 pip install -e ".[examples]"
 
-# Instalación para desarrollo y ejecución de pruebas (incluye pytest, openpyxl y build)
+# Instalación para desarrollo y ejecución de pruebas (incluye pytest y build)
 pip install -e ".[all]"
 ```
 
@@ -43,13 +45,18 @@ import sedmor as sm
 onda = sm.waves.dispersion_relation(h=10.0, T=8.0)
 print(f"Longitud de onda L = {onda['L']:.2f} m | kh = {onda['kh']:.3f}")
 
-# 2. Transporte de arena bajo corriente + oleaje (van Rijn, 2007)
+# 2. Ascenso del oleaje (run-up R2%) en playa según Stockdon et al. (2006)
+ru = sm.runup.runup_stockdon(Hs0=3.5, T=11.0, slope=0.06)
+twl = sm.runup.total_water_level(ru.R2_percent, tide=1.1, storm_surge=0.6)
+print(f"Run-up R2% = {ru.R2_percent:.2f} m | Cota total TWL = {twl.twl:.2f} m")
+
+# 3. Transporte de arena bajo corriente + oleaje (van Rijn, 2007)
 tr = sm.coastal_transport.sand_transport_current_waves(
     depth=8.0, velocity=0.6, wave_height=2.0, wave_period=7.0, d50=0.00022, d90=0.00044
 )
 print(f"Transporte fondo qb = {tr.qb:.4f} | suspensión qs = {tr.qs:.4f} | total qt = {tr.qt:.4f} kg/(m·s)")
 
-# 3. Deriva litoral y erosión de dunas por tormenta
+# 4. Deriva litoral y erosión de dunas por tormenta
 lit = sm.littoral.longshore_and_dune_erosion(
     depth_offshore=25.0, d50=0.00025, wave_height_offshore=4.0,
     wave_period=11.0, wave_angle_offshore=25.0, ssl=3.5, dune_height=5.0, duration_hours=12.0
@@ -57,18 +64,19 @@ lit = sm.littoral.longshore_and_dune_erosion(
 print(f"Deriva van Rijn = {lit.qt_van_rijn_kg_s:.1f} kg/s | Erosión de duna = {lit.vr_volume_t:.1f} m³/m")
 ```
 
-También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, channel_sedimentation, turbidity_current_mud`) o desde cada submódulo (`import sedmor.waves`).
+También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, runup_stockdon, channel_sedimentation`) o desde cada submódulo (`import sedmor.runup`).
 
 ---
 
 ## Arquitectura de la librería (`src/sedmor/`)
 
-La librería está organizada en **12 submódulos** temáticos:
+La librería está organizada en **13 submódulos** temáticos:
 
 | Submódulo | Descripción | Funciones y clases principales |
 | :--- | :--- | :--- |
 | `sedmor.constants` | Constantes físicas y matemáticas | `GRAVITY`, `RHO_FRESH_WATER`, `RHO_SEA_WATER`, `RHO_SEDIMENT`, `VON_KARMAN`, `KINEMATIC_VISCOSITY_20C` |
 | `sedmor.waves` | Ondas lineales, capa límite, rotura y asimetría | `dispersion_relation`, `wavelength_hunt`, `wavelength_nielsen`, `jonswap_spectrum`, `orbital_velocity_profile`, `wave_boundary_layer`, `wave_decay_friction`, `battjes_janssen_profile`, `undertow_velocity`, `eulerian_streaming`, `abreu_skewness_asymmetry`, `isobe_horikawa_skewness`, `nielsen_acceleration_transport` |
+| `sedmor.runup` | Ascenso de oleaje (*run-up*) y nivel total (*TWL*) | `iribarren_number`, `runup_stockdon`, `runup_holman`, `runup_mase`, `runup_hunt`, `runup_nielsen_hanslow`, `runup_eurotop`, `total_water_level`, `compare_runup_models` |
 | `sedmor.rivers` | Hidráulica de canales y curvas de remanso | `trapezoidal_channel_discharge`, `solve_trapezoidal_depth`, `compound_channel_flow`, `compound_channel_backwater`, `free_overfall_brink_depth` |
 | `sedmor.currents` | Asimetría mareal, viento y flujo estratificado | `tidal_asymmetry_m2_m4`, `wind_induced_depth_averaged_velocity`, `wind_induced_velocity_profile`, `stratified_density_flow_profile`, `stratified_channel_sedimentation` |
 | `sedmor.tides` | Propagación de marea e intrusión salina | `tidal_analytical_no_reflection`, `tidal_compound_channel`, `tidal_reflection_prismatic`, `tidal_reflection_converging`, `tidal_fourpole`, `tidal_wave_nonlinear_lamb`, `tidal_progressive_wave`, `soulsby_coastal_flow`, `salinity_van_rijn_steady`, `tidal_salinity_kuijper`, `salinity_time_dependent` |
@@ -84,7 +92,7 @@ La librería está organizada en **12 submódulos** temáticos:
 
 ## Cuadernos de ejemplo (`examples/`)
 
-En la carpeta [`examples/`](examples/) se incluyen **9 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
+En la carpeta [`examples/`](examples/) se incluyen **10 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
 
 | Nº | Cuaderno | Submódulos cubiertos |
 | :--- | :--- | :--- |
@@ -97,6 +105,7 @@ En la carpeta [`examples/`](examples/) se incluyen **9 cuadernos Jupyter ejecuta
 | 07 | [`07_Sedimentacion_Canales_Fosas_y_Puertos.ipynb`](examples/07_Sedimentacion_Canales_Fosas_y_Puertos.ipynb) | `sedmor.sedimentation` |
 | 08 | [`08_Sedimentacion_en_Embalses.ipynb`](examples/08_Sedimentacion_en_Embalses.ipynb) | `sedmor.sedimentation` |
 | 09 | [`09_Morfologia_Litoral_y_Costera.ipynb`](examples/09_Morfologia_Litoral_y_Costera.ipynb) | `sedmor.littoral` |
+| 10 | [`10_Runup_y_Cota_Total_Inundacion.ipynb`](examples/10_Runup_y_Cota_Total_Inundacion.ipynb) | `sedmor.runup` |
 
 Para abrirlos localmente con JupyterLab o Jupyter Notebook:
 
@@ -106,18 +115,18 @@ jupyter lab examples/
 
 ---
 
-## Modo físico estándar vs. reproducción exacta Excel (`strict_excel`)
+## Convención numérica `strict_excel`
 
-Todas las funciones relevantes aceptan el argumento opcional **`strict_excel: bool = False`**:
+Algunas funciones heredan el parámetro opcional **`strict_excel: bool = False`**:
 
-- **`strict_excel=False` (valor por defecto, recomendado para ingeniería y docencia)**: utiliza `math.pi` de doble precisión, signos trigonométricos consistentes en ángulos simétricos y corrige erratas detectadas en celdas específicas de las hojas originales (como constantes redondeadas a `3.14` o factores omitidos).
-- **`strict_excel=True`**: reproduce exactamente las fórmulas, constantes redondeadas (p. ej. `3.14`, `6.28`, `3.13` para $\sqrt{g}$) y particularidades de las hojas Excel de referencia, permitiendo validar los resultados frente a los valores cacheados de las 57 planillas con discrepancias relativas típicamente inferiores a $10^{-11}$.
+- **`strict_excel=False` (valor por defecto, recomendado)**: utiliza `math.pi` de doble precisión, signos trigonométricos consistentes en ángulos simétricos y correcciones analíticas documentadas.
+- **`strict_excel=True`**: aplica constantes decimales históricas (p. ej. `3.14`, `6.28`, `3.13` para $\sqrt{g}$) exclusivamente para verificación numérica retrospectiva frente a cálculos tabulados clásicos, sin leer ni requerir ningún archivo externo.
 
 ---
 
 ## Pruebas automatizadas
 
-La suite de pruebas en [`tests/`](tests/) es completamente autónoma y no requiere los archivos `.xls`/`.xlsx` originales:
+La suite de pruebas en [`tests/`](tests/) es 100% autónoma:
 
 ```bash
 pytest -v
@@ -125,7 +134,58 @@ pytest -v
 
 ---
 
-## Licencia y créditos
+## Independencia de planillas externas, licencia y propiedad intelectual
 
-- Implementación en Python bajo licencia **MIT** (ver [`LICENSE`](LICENSE)).
-- Basado en las formulaciones y planillas de cálculo educativas desarrolladas por **Leo C. van Rijn (2013)** (*Modelling Package 2013*).
+- **Software independiente**: `sedmor` es un desarrollo original en código abierto bajo licencia **MIT** (ver [`LICENSE`](LICENSE)). La licencia cubre exclusivamente el código Python, las pruebas y los cuadernos didácticos de este repositorio.
+- **No publicación de archivos Excel**: este proyecto **no incluye, distribuye, enlaza ni depende** de archivos `.xls`/`.xlsx`, hojas de cálculo originales ni macros propietarias de terceros. Todas las rutinas se basan exclusivamente en ecuaciones matemáticas y modelos empíricos públicos publicados en la literatura científica y libros de texto de ingeniería hidráulica y costera.
+- **Sin afiliación ni respaldo**: la cita académica de autores e investigadores originales reconoce su autoría intelectual sobre las ecuaciones científicas publicadas y no implica afiliación, aprobación ni patrocinio oficial respecto a esta implementación en Python.
+
+---
+
+## Referencias bibliográficas y cómo citar
+
+### Cómo citar esta librería
+
+Si utilizas `sedmor` en docencia, informes técnicos o publicaciones, se sugiere citar tanto el software como a los autores originales de las formulaciones científicas empleadas:
+
+```bibtex
+@software{sedmor_inh_2026,
+  author       = {{Instituto Nacional de Hidráulica (INH-IDI) y contribuidores}},
+  title        = {sedmor: Librería educativa en Python para hidrodinámica, transporte de sedimentos, run-up y morfología},
+  year         = {2026},
+  version      = {0.1.0},
+  url          = {https://github.com/INH-IDI/sedmor_toolkit},
+  license      = {MIT}
+}
+```
+
+### Fuentes científicas principales implementadas
+
+* **Obras generales de hidráulica, transporte y morfología**:
+  * van Rijn, L. C. (1993). *Principles of Sediment Transport in Rivers, Estuaries and Coastal Seas*. Aqua Publications.
+  * van Rijn, L. C. (2005 / 2013). *Principles of Sedimentation and Erosion Engineering in Rivers, Estuaries and Coastal Seas* (y compendios académicos asociados en [leovanrijn-sediment.com](https://www.leovanrijn-sediment.com)).
+  * van Rijn, L. C. (2007). *Unified View of Sediment Transport by Currents and Waves. I–IV*. Journal of Hydraulic Engineering, ASCE, 133(6–7).
+  * Soulsby, R. L. (1997). *Dynamics of Marine Sands: A Manual for Practical Applications*. Thomas Telford.
+* **Ondas, capa límite y asimetría**:
+  * Battjes, J. A., & Janssen, J. P. F. M. (1978). *Energy loss and set-up due to breaking of random waves*. Proc. 16th Int. Conf. Coastal Engineering (ICCE), ASCE, 569–587.
+  * Hunt, J. N. (1979). *Direct solution of wave dispersion equation*. J. Waterway, Port, Coastal and Ocean Div., ASCE, 105(4), 457–459.
+  * Isobe, M., & Horikawa, K. (1982). *Study on water particle velocities of shoaling and breaking waves*. Coastal Engineering in Japan, 25, 109–123.
+  * Nielsen, P. (1992). *Coastal Bottom Boundary Layers and Sediment Transport*. World Scientific.
+  * Nielsen, P. (2006). *Sheet flow sediment transport under waves with acceleration skewness and boundary layer streaming*. Coastal Engineering, 53(9), 749–758.
+  * Abreu, T., Silva, P. A., Sancho, F., & Temperville, A. (2010). *Analytical approximate wave form for asymmetric waves*. Coastal Engineering, 57(7), 656–667.
+* **Ascenso del oleaje (*run-up*) y defensas costeras (`sedmor.runup`)**:
+  * Hunt, I. A. (1959). *Design of seawalls and breakwaters*. J. Waterways and Harbors Div., ASCE, 85(3), 123–152.
+  * Battjes, J. A. (1974). *Surf similarity*. Proc. 14th Int. Conf. Coastal Engineering (ICCE), ASCE, 466–480.
+  * Holman, R. A. (1986). *Extreme value statistics for wave run-up on a natural beach*. Coastal Engineering, 9(6), 527–544.
+  * Mase, H. (1989). *Random wave runup height on gentle slope*. J. Waterway, Port, Coastal and Ocean Engineering, ASCE, 115(5), 649–661.
+  * Nielsen, P., & Hanslow, D. J. (1991). *Wave runup distributions on natural beaches*. Journal of Coastal Research, 7(4), 1139–1152.
+  * Stockdon, H. F., Holman, R. A., Howd, P. A., & Sallenger Jr., A. H. (2006). *Empirical parameterization of setup, swash, and runup*. Coastal Engineering, 53(7), 573–588.
+  * van der Meer, J. W., Allsop, N. W. H., Bruce, T., De Rouck, J., Kortenhaus, A., Pullen, T., Schüttrumpf, H., Troch, P., & Zanuttigh, B. (2018). *EurOtop — Manual on wave overtopping of sea defences and related structures* (2ª ed.).
+* **Mareas, intrusión salina, socavación, sedimentación y morfología litoral**:
+  * Kuijper, K., & van Rijn, L. C. (2011). *Analytical and numerical analysis of tides and salinities in estuaries; part II: salinity distributions in prismatic and convergent tidal channels*. Ocean Dynamics, 61, 1743–1765.
+  * Eysink, W. D., & Vermaas, H. (1983). *Computational methods to estimate the sedimentation in dredged channels and harbour basins in estuarine environments*. Delft Hydraulics.
+  * Sumer, B. M., & Fredsøe, J. (2002). *The Mechanics of Scour in the Marine Environment*. World Scientific.
+  * Kamphuis, J. W. (1991). *Alongshore sediment transport rate*. J. Waterway, Port, Coastal and Ocean Engineering, ASCE, 117(6), 624–640.
+  * Kriebel, D. L., & Dean, R. G. (1993). *Convolution method for time-dependent beach-profile response*. J. Waterway, Port, Coastal and Ocean Engineering, ASCE, 119(2), 204–226.
+  * Hallermeier, R. J., & Rhodes, P. E. (1988). *Generic treatment of dune erosion for 100-year event*. Proc. 21st Int. Conf. Coastal Engineering, ASCE, 1197–1211.
+  * USACE / CERC (1984). *Shore Protection Manual*. U.S. Army Engineer Waterways Experiment Station.

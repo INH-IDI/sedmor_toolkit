@@ -5,19 +5,19 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sedmor"
 version = "0.1.0"
-description = "Libreria educativa en Python para hidrodinamica costera/fluvial, transporte de sedimentos y morfodinamica (basada en las herramientas Excel de Leo C. van Rijn, 2013)."
+description = "Libreria educativa independiente en Python para hidrodinamica costera y fluvial, transporte de sedimentos, run-up y morfodinamica."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
 authors = [
-  { name = "Basado en las hojas de calculo de Leo C. van Rijn (2013)" },
+  { name = "Instituto Nacional de Hidraulica (INH-IDI) y contribuidores de sedmor", email = "i-d-i@inh.cl" },
 ]
 keywords = [
   "sediment-transport",
   "coastal-engineering",
   "fluvial-hydraulics",
   "morphodynamics",
-  "van-rijn",
+  "wave-runup",
   "hydrodynamics",
 ]
 classifiers = [
@@ -37,10 +37,14 @@ dependencies = [
   "scipy>=1.10",
 ]
 
+[project.urls]
+Homepage = "https://github.com/INH-IDI/sedmor_toolkit"
+Repository = "https://github.com/INH-IDI/sedmor_toolkit"
+Issues = "https://github.com/INH-IDI/sedmor_toolkit/issues"
+
 [project.optional-dependencies]
 dev = [
   "pytest>=7.4",
-  "openpyxl>=3.1",
   "build>=1.0",
 ]
 examples = [
