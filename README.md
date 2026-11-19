@@ -1,6 +1,6 @@
 # sedmor — Librería de Hidrodinámica, Transporte de Sedimentos, Obras Costeras y Morfología
 
-`sedmor` es una librería científica abierta en Python, ligera y fácil de instalar, diseñada para docencia e ingeniería en **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada formulaciones clásicas y modernas publicadas en la literatura técnica de mecánica de fluidos, sedimentos y obras marítimas (en **16 submódulos**), acompañadas de **13 cuadernos Jupyter didácticos en español** listos para ejecutar.
+`sedmor` es una librería científica abierta en Python, ligera y fácil de instalar, diseñada para docencia e ingeniería en **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada formulaciones clásicas y modernas publicadas en la literatura técnica de mecánica de fluidos, sedimentos y obras marítimas (en **17 submódulos**), acompañadas de **14 cuadernos Jupyter didácticos en español** listos para ejecutar.
 
 > **Aviso importante de independencia**: `sedmor` es una implementación original e independiente escrita íntegramente en Python. **Este repositorio NO contiene, publica, empaqueta ni redistribuye archivos Excel (`.xls`/`.xlsx`), macros ni materiales propietarios de terceros**, y su funcionamiento es 100% autónomo.
 
@@ -41,9 +41,10 @@ pip install .
 ```python
 import sedmor as sm
 
-# 1. Relación de dispersión lineal de oleaje (h = 10 m, T = 8 s)
+# 1. Relación de dispersión lineal y propagación con corriente (h = 10 m, T = 8 s, U = -1.2 m/s)
 onda = sm.waves.dispersion_relation(h=10.0, T=8.0)
-print(f"Longitud de onda L = {onda['L']:.2f} m | kh = {onda['kh']:.3f}")
+prop = sm.propagation.shoaling_refraction_snell(H0=2.5, T=8.0, theta0_deg=25.0, h=10.0, U=1.2, current_dir_deg=180.0)
+print(f"L (U=0) = {onda['L']:.2f} m | L (U=-1.2) = {prop.L:.2f} m | H = {prop.H:.2f} m | θ = {prop.theta_deg:.1f}°")
 
 # 2. Ascenso (run-up R2%), rebase (overtopping) y coraza de roca
 ru = sm.runup.runup_stockdon(Hs0=3.5, T=11.0, slope=0.06)
@@ -68,18 +69,19 @@ br = sm.closure.bruun_rule_recession(sea_level_rise=0.5, closure_depth=dc, berm_
 print(f"Deriva van Rijn = {lit.qt_van_rijn_kg_s:.1f} kg/s | dc (Birkemeier) = {dc:.2f} m | Bruun R = {br.recession_m:.1f} m")
 ```
 
-También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, runup_stockdon, overtopping_rubble_mound, hudson_armor_weight, depth_of_closure_birkemeier`) o desde cada submódulo (`import sedmor.runup, sedmor.overtopping, sedmor.armor, sedmor.closure`).
+También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, dispersion_with_current, runup_stockdon, overtopping_rubble_mound, hudson_armor_weight, depth_of_closure_birkemeier`) o desde cada submódulo (`import sedmor.propagation, sedmor.runup, sedmor.overtopping, sedmor.armor, sedmor.closure`).
 
 ---
 
 ## Arquitectura de la librería (`src/sedmor/`)
 
-La librería está organizada en **16 submódulos** temáticos:
+La librería está organizada en **17 submódulos** temáticos:
 
 | Submódulo | Descripción | Funciones y clases principales |
 | :--- | :--- | :--- |
 | `sedmor.constants` | Constantes físicas y matemáticas | `GRAVITY`, `RHO_FRESH_WATER`, `RHO_SEA_WATER`, `RHO_SEDIMENT`, `VON_KARMAN`, `KINEMATIC_VISCOSITY_20C` |
 | `sedmor.waves` | Ondas lineales, capa límite, rotura y asimetría | `dispersion_relation`, `wavelength_hunt`, `wavelength_nielsen`, `jonswap_spectrum`, `orbital_velocity_profile`, `wave_boundary_layer`, `wave_decay_friction`, `battjes_janssen_profile`, `undertow_velocity`, `eulerian_streaming`, `abreu_skewness_asymmetry`, `isobe_horikawa_skewness`, `nielsen_acceleration_transport` |
+| `sedmor.propagation` | Propagación, refracción, difracción y corrientes | `dispersion_with_current`, `shoaling_refraction_snell`, `diffraction_semi_infinite_breakwater`, `diffraction_breakwater_gap`, `diffraction_random_directional`, `propagate_wave_profile` |
 | `sedmor.runup` | Ascenso de oleaje (*run-up*) y nivel total (*TWL*) | `iribarren_number`, `runup_stockdon`, `runup_holman`, `runup_mase`, `runup_hunt`, `runup_nielsen_hanslow`, `runup_eurotop`, `total_water_level`, `compare_runup_models` |
 | `sedmor.overtopping` | Rebase de oleaje (*overtopping*, EurOtop 2018) | `overtopping_slope`, `overtopping_rubble_mound`, `overtopping_vertical_wall`, `individual_overtopping_volumes`, `solve_required_freeboard`, `oblique_factor_overtopping`, `classify_overtopping_hazard` |
 | `sedmor.armor` | Peso de roca, estabilidad de escolleras y filtros | `hudson_armor_weight`, `van_der_meer_rock_armor`, `van_gent_shallow_rock_armor`, `isbash_stone_stability`, `rock_size_properties`, `classify_rock_grading`, `filter_and_underlayer_design`, `compare_armor_methods` |
@@ -99,7 +101,7 @@ La librería está organizada en **16 submódulos** temáticos:
 
 ## Cuadernos de ejemplo (`examples/`)
 
-En la carpeta [`examples/`](examples/) se incluyen **13 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
+En la carpeta [`examples/`](examples/) se incluyen **14 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
 
 | Nº | Cuaderno | Submódulos cubiertos |
 | :--- | :--- | :--- |
@@ -116,6 +118,7 @@ En la carpeta [`examples/`](examples/) se incluyen **13 cuadernos Jupyter ejecut
 | 11 | [`11_Rebase_de_Oleaje_EurOtop.ipynb`](examples/11_Rebase_de_Oleaje_EurOtop.ipynb) | `sedmor.overtopping`, `sedmor.runup` |
 | 12 | [`12_Peso_de_Roca_y_Estabilidad_de_Escolleras.ipynb`](examples/12_Peso_de_Roca_y_Estabilidad_de_Escolleras.ipynb) | `sedmor.armor` |
 | 13 | [`13_Profundidad_de_Cierre_y_Perfil_de_Equilibrio.ipynb`](examples/13_Profundidad_de_Cierre_y_Perfil_de_Equilibrio.ipynb) | `sedmor.closure` |
+| 14 | [`14_Propagacion_Refraccion_Difraccion_y_Corrientes.ipynb`](examples/14_Propagacion_Refraccion_Difraccion_y_Corrientes.ipynb) | `sedmor.propagation` |
 
 Para abrirlos localmente con JupyterLab o Jupyter Notebook:
 
@@ -183,6 +186,12 @@ Si utilizas `sedmor` en docencia, informes técnicos o publicaciones, se sugiere
   * Nielsen, P. (1992). *Coastal Bottom Boundary Layers and Sediment Transport*. World Scientific.
   * Nielsen, P. (2006). *Sheet flow sediment transport under waves with acceleration skewness and boundary layer streaming*. Coastal Engineering, 53(9), 749–758.
   * Abreu, T., Silva, P. A., Sancho, F., & Temperville, A. (2010). *Analytical approximate wave form for asymmetric waves*. Coastal Engineering, 57(7), 656–667.
+* **Propagación, refracción, difracción e interacción ola–corriente (`sedmor.propagation`)**:
+  * Sommerfeld, A. (1896). *Mathematische Theorie der Diffraction*. Mathematische Annalen, 47, 317–374.
+  * Penney, W. G., & Price, A. T. (1952). *The diffraction theory of sea waves and the shelter afforded by breakwaters*. Phil. Trans. Royal Society London A, 244(882), 236–253.
+  * Goda, Y., Takayama, T., & Suzuki, Y. (1978). *Diffraction diagrams for directional random waves*. Proc. 16th Int. Conf. Coastal Engineering (ICCE), ASCE, 628–650; y Goda, Y. (2000). *Random Seas and Design of Maritime Structures* (2ª ed.). World Scientific.
+  * Bretherton, F. P., & Garrett, C. J. R. (1968). *Wavetrains in inhomogeneous moving media*. Proc. Royal Society London A, 302, 529–554.
+  * Peregrine, D. H. (1976). *Interaction of water waves and currents*. Advances in Applied Mechanics, 16, 9–117; y Jonsson, I. G. (1990). *Wave–current interactions*. En *The Sea*, Vol. 9, Wiley.
 * **Ascenso (*run-up*) y rebase (*overtopping*) de oleaje (`sedmor.runup`, `sedmor.overtopping`)**:
   * Hunt, I. A. (1959). *Design of seawalls and breakwaters*. J. Waterways and Harbors Div., ASCE, 85(3), 123–152.
   * Battjes, J. A. (1974). *Surf similarity*. Proc. 14th Int. Conf. Coastal Engineering (ICCE), ASCE, 466–480.

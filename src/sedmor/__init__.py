@@ -16,6 +16,7 @@ from sedmor import (
     currents,
     littoral,
     overtopping,
+    propagation,
     river_transport,
     rivers,
     runup,
@@ -44,6 +45,7 @@ from sedmor.constants import (  # noqa: F401
 from sedmor.currents import *  # noqa: F401,F403
 from sedmor.littoral import *  # noqa: F401,F403
 from sedmor.overtopping import *  # noqa: F401,F403
+from sedmor.propagation import *  # noqa: F401,F403
 from sedmor.river_transport import *  # noqa: F401,F403
 from sedmor.rivers import *  # noqa: F401,F403
 from sedmor.runup import *  # noqa: F401,F403
@@ -64,6 +66,7 @@ _SUBMODULES = [
     "currents",
     "littoral",
     "overtopping",
+    "propagation",
     "river_transport",
     "rivers",
     "runup",
@@ -94,6 +97,7 @@ __all__ = sorted(
         *_SUBMODULES,
         *_CONSTANTS,
         *waves.__all__,
+        *propagation.__all__,
         *runup.__all__,
         *overtopping.__all__,
         *armor.__all__,
