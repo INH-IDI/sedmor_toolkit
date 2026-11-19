@@ -1,6 +1,6 @@
 # AGENTS.md — Guía de desarrollo y arquitectura para `sedmor`
 
-Este repositorio contiene la librería educativa **`sedmor`** (`sedmor-0.1.0`), implementada de forma independiente en Python puro (NumPy y SciPy) a partir de formulaciones científicas abiertas de ingeniería fluvial, estuarina y costera, acompañada de **14 cuadernos Jupyter didácticos en español** en [`examples/`](examples/).
+Este repositorio contiene la librería educativa **`sedmor`** (`sedmor-0.1.0`), implementada de forma independiente en Python puro (NumPy y SciPy) a partir de formulaciones científicas abiertas de ingeniería fluvial, estuarina y costera, acompañada de **15 cuadernos Jupyter didácticos en español** en [`examples/`](examples/).
 
 Repositorio remoto: `https://github.com/INH-IDI/sedmor_toolkit` (rama principal: `main`).
 
@@ -11,7 +11,7 @@ Repositorio remoto: `https://github.com/INH-IDI/sedmor_toolkit` (rama principal:
 1. **Independencia total y propiedad intelectual**:
    - `sedmor` es un desarrollo original en código abierto (licencia MIT sobre el código Python, pruebas y cuadernos).
    - **No** incluir, almacenar, empaquetar ni referenciar rutas a archivos `.xls`/`.xlsx` externos o macros propietarias de terceros; tanto la librería como [`tests/`](tests/) deben ser 100% autónomas.
-   - Al añadir módulos nuevos (como [`runup.py`](src/sedmor/runup.py), [`overtopping.py`](src/sedmor/overtopping.py), [`armor.py`](src/sedmor/armor.py), [`closure.py`](src/sedmor/closure.py) o [`propagation.py`](src/sedmor/propagation.py)), basarlos exclusivamente en ecuaciones publicadas en literatura científica abierta y documentar las referencias bibliográficas en el docstring y en [`README.md`](README.md).
+   - Al añadir módulos nuevos (como [`runup.py`](src/sedmor/runup.py), [`overtopping.py`](src/sedmor/overtopping.py), [`armor.py`](src/sedmor/armor.py), [`closure.py`](src/sedmor/closure.py), [`propagation.py`](src/sedmor/propagation.py) o [`sediments.py`](src/sedmor/sediments.py)), basarlos exclusivamente en ecuaciones publicadas en literatura científica abierta y documentar las referencias bibliográficas en el docstring y en [`README.md`](README.md).
 2. **Alcance funcional**:
    - Cobertura centrada en formulaciones analíticas, empíricas y semiempíricas 1D/0D en Python puro. No incorporar ejecutables binarios externos, código compilado heredado ni herramientas ajenas al alcance de esta librería.
    - No modificar archivos fuera de `sedmor_toolkit/`.
@@ -34,11 +34,12 @@ Las funciones calibradas frente a formulaciones tabuladas clásicas aceptan el a
 
 ## 3. Mapa de arquitectura (`src/sedmor/`)
 
-[`src/sedmor/__init__.py`](src/sedmor/__init__.py) exporta `__version__ = "0.1.0"`, los **17 submódulos** y **223 símbolos públicos** en `__all__`:
+[`src/sedmor/__init__.py`](src/sedmor/__init__.py) exporta `__version__ = "0.1.0"`, los **18 submódulos** y **245 símbolos públicos** en `__all__`:
 
 | Archivo | Rol y contenido principal |
 | :--- | :--- |
 | [`constants.py`](src/sedmor/constants.py) | Constantes físicas (`GRAVITY`, `RHO_FRESH_WATER`, `RHO_SEA_WATER`, `RHO_SEDIMENT`, `VON_KARMAN`, viscosidades, `PI_EXCEL`, `PI_STANDARD`) |
+| [`sediments.py`](src/sedmor/sediments.py) | Propiedades agua–sedimento, velocidad de caída (`fall_velocity_stokes`, `fall_velocity_rubey`, `fall_velocity_van_rijn`, `fall_velocity_soulsby`, `fall_velocity_ferguson_church`, `flocculated_settling_velocity`) y análisis granulométrico (`grain_size_curve_statistics`, `blend_grain_size_curves`, `check_filter_compatibility`) |
 | [`waves.py`](src/sedmor/waves.py) | Relación de dispersión (`dispersion_relation`, Hunt, Nielsen), espectro JONSWAP, capa límite oscilatoria, decaimiento por fricción, Battjes & Janssen, Abreu, Isobe-Horikawa, Nielsen, *undertow* y *streaming* |
 | [`propagation.py`](src/sedmor/propagation.py) | Propagación, refracción, difracción y dispersión con corriente (`dispersion_with_current`, `shoaling_refraction_snell`, `diffraction_semi_infinite_breakwater`, `diffraction_breakwater_gap`, `diffraction_random_directional`, `propagate_wave_profile`) |
 | [`runup.py`](src/sedmor/runup.py) | Número de Iribarren y modelos de *run-up* (`runup_stockdon`, `runup_holman`, `runup_mase`, `runup_hunt`, `runup_nielsen_hanslow`, `runup_eurotop`), `total_water_level` (*TWL*) y `compare_runup_models` |
@@ -82,9 +83,9 @@ Ejecutar siempre en un entorno limpio (sin instalaciones heredadas previas en `s
 PYTHONPATH=src python3 -m pytest -v
 ```
 
-La suite actual comprende **91 pruebas** repartidas en 13 archivos en [`tests/`](tests/) (`test_armor.py`, `test_closure.py`, `test_currents_tides.py`, `test_littoral.py`, `test_overtopping.py`, `test_propagation.py`, `test_rivers_transport.py`, `test_runup.py`, `test_scour.py`, `test_sedimentation.py`, `test_tidal_transport.py`, `test_turbidity.py`, `test_waves.py`).
+La suite actual comprende **96 pruebas** repartidas en 14 archivos en [`tests/`](tests/) (`test_armor.py`, `test_closure.py`, `test_currents_tides.py`, `test_littoral.py`, `test_overtopping.py`, `test_propagation.py`, `test_rivers_transport.py`, `test_runup.py`, `test_scour.py`, `test_sedimentation.py`, `test_sediments.py`, `test_tidal_transport.py`, `test_turbidity.py`, `test_waves.py`).
 
-### Cuadernos de ejemplo (`examples/01..14_*.ipynb`)
+### Cuadernos de ejemplo (`examples/01..15_*.ipynb`)
 
 Si se modifican APIs públicas o cuadernos, re-ejecutarlos sin definir `MPLBACKEND` (para incrustar las figuras PNG generadas con `matplotlib`) y usando `PYTHONPATH` absoluto hacia `src/` (dado que `nbconvert` ejecuta con cwd en `examples/`):
 

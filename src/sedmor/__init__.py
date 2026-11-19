@@ -22,6 +22,7 @@ from sedmor import (
     runup,
     scour,
     sedimentation,
+    sediments,
     tidal_transport,
     tides,
     turbidity,
@@ -51,6 +52,7 @@ from sedmor.rivers import *  # noqa: F401,F403
 from sedmor.runup import *  # noqa: F401,F403
 from sedmor.scour import *  # noqa: F401,F403
 from sedmor.sedimentation import *  # noqa: F401,F403
+from sedmor.sediments import *  # noqa: F401,F403
 from sedmor.tidal_transport import *  # noqa: F401,F403
 from sedmor.tides import *  # noqa: F401,F403
 from sedmor.turbidity import *  # noqa: F401,F403
@@ -72,6 +74,7 @@ _SUBMODULES = [
     "runup",
     "scour",
     "sedimentation",
+    "sediments",
     "tidal_transport",
     "tides",
     "turbidity",
@@ -102,6 +105,7 @@ __all__ = sorted(
         *overtopping.__all__,
         *armor.__all__,
         *closure.__all__,
+        *sediments.__all__,
         *currents.__all__,
         *tides.__all__,
         *rivers.__all__,

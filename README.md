@@ -1,6 +1,6 @@
 # sedmor — Librería de Hidrodinámica, Transporte de Sedimentos, Obras Costeras y Morfología
 
-`sedmor` es una librería científica abierta en Python, ligera y fácil de instalar, diseñada para docencia e ingeniería en **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada formulaciones clásicas y modernas publicadas en la literatura técnica de mecánica de fluidos, sedimentos y obras marítimas (en **17 submódulos**), acompañadas de **14 cuadernos Jupyter didácticos en español** listos para ejecutar.
+`sedmor` es una librería científica abierta en Python, ligera y fácil de instalar, diseñada para docencia e ingeniería en **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada formulaciones clásicas y modernas publicadas en la literatura técnica de mecánica de fluidos, sedimentos y obras marítimas (en **18 submódulos**), acompañadas de **15 cuadernos Jupyter didácticos en español** listos para ejecutar.
 
 > **Aviso importante de independencia**: `sedmor` es una implementación original e independiente escrita íntegramente en Python. **Este repositorio NO contiene, publica, empaqueta ni redistribuye archivos Excel (`.xls`/`.xlsx`), macros ni materiales propietarios de terceros**, y su funcionamiento es 100% autónomo.
 
@@ -69,17 +69,18 @@ br = sm.closure.bruun_rule_recession(sea_level_rise=0.5, closure_depth=dc, berm_
 print(f"Deriva van Rijn = {lit.qt_van_rijn_kg_s:.1f} kg/s | dc (Birkemeier) = {dc:.2f} m | Bruun R = {br.recession_m:.1f} m")
 ```
 
-También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, dispersion_with_current, runup_stockdon, overtopping_rubble_mound, hudson_armor_weight, depth_of_closure_birkemeier`) o desde cada submódulo (`import sedmor.propagation, sedmor.runup, sedmor.overtopping, sedmor.armor, sedmor.closure`).
+También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, dispersion_with_current, fall_velocity_soulsby, grain_size_curve_statistics, runup_stockdon, overtopping_rubble_mound, hudson_armor_weight, depth_of_closure_birkemeier`) o desde cada submódulo (`import sedmor.propagation, sedmor.sediments, sedmor.runup, sedmor.overtopping, sedmor.armor, sedmor.closure`).
 
 ---
 
 ## Arquitectura de la librería (`src/sedmor/`)
 
-La librería está organizada en **17 submódulos** temáticos:
+La librería está organizada en **18 submódulos** temáticos:
 
 | Submódulo | Descripción | Funciones y clases principales |
 | :--- | :--- | :--- |
 | `sedmor.constants` | Constantes físicas y matemáticas | `GRAVITY`, `RHO_FRESH_WATER`, `RHO_SEA_WATER`, `RHO_SEDIMENT`, `VON_KARMAN`, `KINEMATIC_VISCOSITY_20C` |
+| `sedmor.sediments` | Velocidad de caída y curvas granulométricas | `water_kinematic_viscosity`, `dimensionless_grain_size`, `fall_velocity_stokes`, `fall_velocity_rubey`, `fall_velocity_van_rijn`, `fall_velocity_soulsby`, `fall_velocity_ferguson_church`, `flocculated_settling_velocity`, `sieve_data_to_percent_passing`, `grain_size_curve_statistics`, `blend_grain_size_curves`, `check_filter_compatibility` |
 | `sedmor.waves` | Ondas lineales, capa límite, rotura y asimetría | `dispersion_relation`, `wavelength_hunt`, `wavelength_nielsen`, `jonswap_spectrum`, `orbital_velocity_profile`, `wave_boundary_layer`, `wave_decay_friction`, `battjes_janssen_profile`, `undertow_velocity`, `eulerian_streaming`, `abreu_skewness_asymmetry`, `isobe_horikawa_skewness`, `nielsen_acceleration_transport` |
 | `sedmor.propagation` | Propagación, refracción, difracción y corrientes | `dispersion_with_current`, `shoaling_refraction_snell`, `diffraction_semi_infinite_breakwater`, `diffraction_breakwater_gap`, `diffraction_random_directional`, `propagate_wave_profile` |
 | `sedmor.runup` | Ascenso de oleaje (*run-up*) y nivel total (*TWL*) | `iribarren_number`, `runup_stockdon`, `runup_holman`, `runup_mase`, `runup_hunt`, `runup_nielsen_hanslow`, `runup_eurotop`, `total_water_level`, `compare_runup_models` |
@@ -101,7 +102,7 @@ La librería está organizada en **17 submódulos** temáticos:
 
 ## Cuadernos de ejemplo (`examples/`)
 
-En la carpeta [`examples/`](examples/) se incluyen **14 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
+En la carpeta [`examples/`](examples/) se incluyen **15 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
 
 | Nº | Cuaderno | Submódulos cubiertos |
 | :--- | :--- | :--- |
@@ -119,6 +120,7 @@ En la carpeta [`examples/`](examples/) se incluyen **14 cuadernos Jupyter ejecut
 | 12 | [`12_Peso_de_Roca_y_Estabilidad_de_Escolleras.ipynb`](examples/12_Peso_de_Roca_y_Estabilidad_de_Escolleras.ipynb) | `sedmor.armor` |
 | 13 | [`13_Profundidad_de_Cierre_y_Perfil_de_Equilibrio.ipynb`](examples/13_Profundidad_de_Cierre_y_Perfil_de_Equilibrio.ipynb) | `sedmor.closure` |
 | 14 | [`14_Propagacion_Refraccion_Difraccion_y_Corrientes.ipynb`](examples/14_Propagacion_Refraccion_Difraccion_y_Corrientes.ipynb) | `sedmor.propagation` |
+| 15 | [`15_Velocidad_de_Caida_y_Curvas_Granulometricas.ipynb`](examples/15_Velocidad_de_Caida_y_Curvas_Granulometricas.ipynb) | `sedmor.sediments` |
 
 Para abrirlos localmente con JupyterLab o Jupyter Notebook:
 
@@ -179,6 +181,13 @@ Si utilizas `sedmor` en docencia, informes técnicos o publicaciones, se sugiere
   * van Rijn, L. C. (2005 / 2013). *Principles of Sedimentation and Erosion Engineering in Rivers, Estuaries and Coastal Seas* (y compendios académicos asociados en [leovanrijn-sediment.com](https://www.leovanrijn-sediment.com)).
   * van Rijn, L. C. (2007). *Unified View of Sediment Transport by Currents and Waves. I–IV*. Journal of Hydraulic Engineering, ASCE, 133(6–7).
   * Soulsby, R. L. (1997). *Dynamics of Marine Sands: A Manual for Practical Applications*. Thomas Telford.
+* **Velocidad de caída de sedimentos y granulometría (`sedmor.sediments`)**:
+  * Stokes, G. G. (1851). *On the effect of the internal friction of fluids on the motion of pendulums*. Trans. Cambridge Philosophical Society, 9, 8–106.
+  * Rubey, W. W. (1933). *Settling velocities of gravel, sand, and silt particles*. American Journal of Science, 25, 325–338.
+  * Richardson, J. F., & Zaki, W. N. (1954). *Sedimentation and fluidisation: Part I*. Trans. Inst. Chemical Engineers, 32, 35–53.
+  * Ferguson, R. I., & Church, M. (2004). *A simple universal equation for grain settling velocity*. Journal of Sedimentary Research, 74(6), 933–937.
+  * Wentworth, C. K. (1922). *A scale of grade and class terms for clastic sediments*. Journal of Geology, 30(5), 377–392; y Krumbein, W. C. (1934). *Size frequency distributions of sediments*. J. Sedimentary Petrology, 4, 65–77.
+  * Folk, R. L., & Ward, W. C. (1957). *Brazos River bar: a study in the significance of grain size parameters*. J. Sedimentary Petrology, 27(1), 3–26.
 * **Ondas, capa límite y asimetría**:
   * Battjes, J. A., & Janssen, J. P. F. M. (1978). *Energy loss and set-up due to breaking of random waves*. Proc. 16th Int. Conf. Coastal Engineering (ICCE), ASCE, 569–587.
   * Hunt, J. N. (1979). *Direct solution of wave dispersion equation*. J. Waterway, Port, Coastal and Ocean Div., ASCE, 105(4), 457–459.
