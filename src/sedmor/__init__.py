@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from sedmor import (
     armor,
+    closure,
     coastal_transport,
     constants,
     currents,
@@ -26,6 +27,7 @@ from sedmor import (
     waves,
 )
 from sedmor.armor import *  # noqa: F401,F403
+from sedmor.closure import *  # noqa: F401,F403
 from sedmor.coastal_transport import *  # noqa: F401,F403
 from sedmor.constants import (  # noqa: F401
     GRAVITY,
@@ -56,6 +58,7 @@ __version__ = "0.1.0"
 
 _SUBMODULES = [
     "armor",
+    "closure",
     "coastal_transport",
     "constants",
     "currents",
@@ -94,6 +97,7 @@ __all__ = sorted(
         *runup.__all__,
         *overtopping.__all__,
         *armor.__all__,
+        *closure.__all__,
         *currents.__all__,
         *tides.__all__,
         *rivers.__all__,

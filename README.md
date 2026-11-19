@@ -1,6 +1,6 @@
 # sedmor — Librería de Hidrodinámica, Transporte de Sedimentos, Obras Costeras y Morfología
 
-`sedmor` es una librería científica abierta en Python, ligera y fácil de instalar, diseñada para docencia e ingeniería en **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada formulaciones clásicas y modernas publicadas en la literatura técnica de mecánica de fluidos, sedimentos y obras marítimas (en **15 submódulos**), acompañadas de **12 cuadernos Jupyter didácticos en español** listos para ejecutar.
+`sedmor` es una librería científica abierta en Python, ligera y fácil de instalar, diseñada para docencia e ingeniería en **hidráulica fluvial, estuarina y costera**. Implementa de forma vectorizada, modular y validada formulaciones clásicas y modernas publicadas en la literatura técnica de mecánica de fluidos, sedimentos y obras marítimas (en **16 submódulos**), acompañadas de **13 cuadernos Jupyter didácticos en español** listos para ejecutar.
 
 > **Aviso importante de independencia**: `sedmor` es una implementación original e independiente escrita íntegramente en Python. **Este repositorio NO contiene, publica, empaqueta ni redistribuye archivos Excel (`.xls`/`.xlsx`), macros ni materiales propietarios de terceros**, y su funcionamiento es 100% autónomo.
 
@@ -58,21 +58,23 @@ tr = sm.coastal_transport.sand_transport_current_waves(
 )
 print(f"Transporte fondo qb = {tr.qb:.4f} | suspensión qs = {tr.qs:.4f} | total qt = {tr.qt:.4f} kg/(m·s)")
 
-# 4. Deriva litoral y erosión de dunas por tormenta
+# 4. Deriva litoral y profundidad de cierre / Regla de Bruun
 lit = sm.littoral.longshore_and_dune_erosion(
     depth_offshore=25.0, d50=0.00025, wave_height_offshore=4.0,
     wave_period=11.0, wave_angle_offshore=25.0, ssl=3.5, dune_height=5.0, duration_hours=12.0
 )
-print(f"Deriva van Rijn = {lit.qt_van_rijn_kg_s:.1f} kg/s | Erosión de duna = {lit.vr_volume_t:.1f} m³/m")
+dc = sm.closure.depth_of_closure_birkemeier(He=4.2, Te=11.0)
+br = sm.closure.bruun_rule_recession(sea_level_rise=0.5, closure_depth=dc, berm_height=2.0, d50=0.00025)
+print(f"Deriva van Rijn = {lit.qt_van_rijn_kg_s:.1f} kg/s | dc (Birkemeier) = {dc:.2f} m | Bruun R = {br.recession_m:.1f} m")
 ```
 
-También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, runup_stockdon, overtopping_rubble_mound, hudson_armor_weight`) o desde cada submódulo (`import sedmor.runup, sedmor.overtopping, sedmor.armor`).
+También es posible importar símbolos directamente desde la raíz (`from sedmor import dispersion_relation, runup_stockdon, overtopping_rubble_mound, hudson_armor_weight, depth_of_closure_birkemeier`) o desde cada submódulo (`import sedmor.runup, sedmor.overtopping, sedmor.armor, sedmor.closure`).
 
 ---
 
 ## Arquitectura de la librería (`src/sedmor/`)
 
-La librería está organizada en **15 submódulos** temáticos:
+La librería está organizada en **16 submódulos** temáticos:
 
 | Submódulo | Descripción | Funciones y clases principales |
 | :--- | :--- | :--- |
@@ -81,6 +83,7 @@ La librería está organizada en **15 submódulos** temáticos:
 | `sedmor.runup` | Ascenso de oleaje (*run-up*) y nivel total (*TWL*) | `iribarren_number`, `runup_stockdon`, `runup_holman`, `runup_mase`, `runup_hunt`, `runup_nielsen_hanslow`, `runup_eurotop`, `total_water_level`, `compare_runup_models` |
 | `sedmor.overtopping` | Rebase de oleaje (*overtopping*, EurOtop 2018) | `overtopping_slope`, `overtopping_rubble_mound`, `overtopping_vertical_wall`, `individual_overtopping_volumes`, `solve_required_freeboard`, `oblique_factor_overtopping`, `classify_overtopping_hazard` |
 | `sedmor.armor` | Peso de roca, estabilidad de escolleras y filtros | `hudson_armor_weight`, `van_der_meer_rock_armor`, `van_gent_shallow_rock_armor`, `isbash_stone_stability`, `rock_size_properties`, `classify_rock_grading`, `filter_and_underlayer_design`, `compare_armor_methods` |
+| `sedmor.closure` | Profundidad de cierre, equilibrio y derivados | `depth_of_closure_hallermeier`, `depth_of_closure_birkemeier`, `outer_closure_depth_hallermeier`, `depth_of_closure_annual_stats`, `closure_depth_from_wave_series`, `equilibrium_profile_dean`, `bruun_rule_recession`, `beach_nourishment_volume`, `beach_nourishment_advance`, `structure_active_depth_ratio` |
 | `sedmor.rivers` | Hidráulica de canales y curvas de remanso | `trapezoidal_channel_discharge`, `solve_trapezoidal_depth`, `compound_channel_flow`, `compound_channel_backwater`, `free_overfall_brink_depth` |
 | `sedmor.currents` | Asimetría mareal, viento y flujo estratificado | `tidal_asymmetry_m2_m4`, `wind_induced_depth_averaged_velocity`, `wind_induced_velocity_profile`, `stratified_density_flow_profile`, `stratified_channel_sedimentation` |
 | `sedmor.tides` | Propagación de marea e intrusión salina | `tidal_analytical_no_reflection`, `tidal_compound_channel`, `tidal_reflection_prismatic`, `tidal_reflection_converging`, `tidal_fourpole`, `tidal_wave_nonlinear_lamb`, `tidal_progressive_wave`, `soulsby_coastal_flow`, `salinity_van_rijn_steady`, `tidal_salinity_kuijper`, `salinity_time_dependent` |
@@ -96,7 +99,7 @@ La librería está organizada en **15 submódulos** temáticos:
 
 ## Cuadernos de ejemplo (`examples/`)
 
-En la carpeta [`examples/`](examples/) se incluyen **12 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
+En la carpeta [`examples/`](examples/) se incluyen **13 cuadernos Jupyter ejecutados** en español con fundamento teórico, simulaciones numéricas y gráficos comparativos:
 
 | Nº | Cuaderno | Submódulos cubiertos |
 | :--- | :--- | :--- |
@@ -112,6 +115,7 @@ En la carpeta [`examples/`](examples/) se incluyen **12 cuadernos Jupyter ejecut
 | 10 | [`10_Runup_y_Cota_Total_Inundacion.ipynb`](examples/10_Runup_y_Cota_Total_Inundacion.ipynb) | `sedmor.runup` |
 | 11 | [`11_Rebase_de_Oleaje_EurOtop.ipynb`](examples/11_Rebase_de_Oleaje_EurOtop.ipynb) | `sedmor.overtopping`, `sedmor.runup` |
 | 12 | [`12_Peso_de_Roca_y_Estabilidad_de_Escolleras.ipynb`](examples/12_Peso_de_Roca_y_Estabilidad_de_Escolleras.ipynb) | `sedmor.armor` |
+| 13 | [`13_Profundidad_de_Cierre_y_Perfil_de_Equilibrio.ipynb`](examples/13_Profundidad_de_Cierre_y_Perfil_de_Equilibrio.ipynb) | `sedmor.closure` |
 
 Para abrirlos localmente con JupyterLab o Jupyter Notebook:
 
@@ -193,6 +197,14 @@ Si utilizas `sedmor` en docencia, informes técnicos o publicaciones, se sugiere
   * van Gent, M. R. A., Smale, A. J., & Kuiper, C. (2003 / 2004). *Stability of rock slopes with shallow foreshores*. Proc. Coastal Structures 2003, ASCE, 100–112.
   * CIRIA, CUR & CETMEF (2007). *The Rock Manual: The use of rock in hydraulic engineering* (2ª ed., C683).
   * Isbash, S. V. (1936). *Construction of dams by depositing rock in running water*. Proc. 2nd Congress on Large Dams, Washington D.C.
+* **Profundidad de cierre, perfiles de equilibrio y regeneración (`sedmor.closure`)**:
+  * Hallermeier, R. J. (1978 / 1981). *A profile zonation for seasonal sand beaches from wave climate*. Coastal Engineering, 4, 253–277.
+  * Birkemeier, W. A. (1985). *Field data on seaward limit of profile change*. J. Waterway, Port, Coastal and Ocean Engineering, ASCE, 111(3), 598–602.
+  * Houston, J. R. (1996). *Simplified engineering graphs for depth of closure*. Coastal Engineering Technical Note CETN-II-34, USACE.
+  * Nicholls, R. J., Birkemeier, W. A., & Lee, G. (1998). *Evaluation of depth of closure using data from Duck, NC, USA*. Marine Geology, 148, 179–201.
+  * Bruun, P. (1962). *Sea-level rise as a cause of shore erosion*. J. Waterways and Harbors Div., ASCE, 88(1), 117–130.
+  * Rosati, J. D., Dean, R. G., & Walton, T. L. (2013). *The modified Bruun Rule extended for landward transport*. Marine Geology, 340, 71–81.
+  * Dean, R. G. (1987 / 1991). *Equilibrium beach profiles: characteristics and applications*. Journal of Coastal Research, 7(1), 53–84; y *Beach Nourishment: Theory and Practice* (World Scientific, 2002).
 * **Mareas, intrusión salina, socavación, sedimentación y morfología litoral**:
   * Kuijper, K., & van Rijn, L. C. (2011). *Analytical and numerical analysis of tides and salinities in estuaries; part II: salinity distributions in prismatic and convergent tidal channels*. Ocean Dynamics, 61, 1743–1765.
   * Eysink, W. D., & Vermaas, H. (1983). *Computational methods to estimate the sedimentation in dredged channels and harbour basins in estuarine environments*. Delft Hydraulics.

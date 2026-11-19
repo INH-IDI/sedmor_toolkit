@@ -20,6 +20,8 @@ keywords = [
   "wave-runup",
   "wave-overtopping",
   "rock-armor",
+  "depth-of-closure",
+  "equilibrium-beach-profile",
   "hydrodynamics",
 ]
 classifiers = [
